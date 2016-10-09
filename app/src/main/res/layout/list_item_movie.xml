@@ -4,15 +4,17 @@
     android:layout_height="wrap_content">
 
     <RelativeLayout
+        android:id="@+id/list_view_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
         android:padding="@dimen/sides_padding">
 
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/thumbnail"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/list_img_height"
-            android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:minWidth="68dp"
             android:scaleType="centerCrop"
@@ -26,7 +28,8 @@
             android:layout_marginBottom="4dp"
             android:layout_marginLeft="@dimen/sides_padding"
             android:layout_toRightOf="@+id/thumbnail"
-            android:maxLines="1"
+            android:ellipsize="end"
+            android:maxLines="2"
             tools:text="Stranger things" />
 
         <TextView

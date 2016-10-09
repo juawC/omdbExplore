@@ -3,8 +3,6 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="input_text_weight">48dp</dimen>
-    <dimen name="fab_margin">16dp</dimen>
-    <dimen name="app_bar_height">180dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="sides_padding">8dp</dimen>
     <dimen name="default_elevation">4dp</dimen>
@@ -25,6 +23,5 @@
     <item name="detail_toolbar_parallax_multiplier" format="float" type="dimen">0.8</item>
     <dimen name="detail_photo_height">304dp</dimen>
     <dimen name="detail_toolbar_horizontal_padding">72dp</dimen>
-    <dimen name="detail_body_top_margin">24dp</dimen>
     <dimen name="detail_body_bottom_margin">88dp</dimen>
 </resources>

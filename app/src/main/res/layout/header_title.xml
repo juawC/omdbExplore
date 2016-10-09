@@ -7,7 +7,7 @@
         android:background="@drawable/photo_background_protection" />
 
     <TextView
-        android:id="@+id/article_title"
+        android:id="@+id/movie_title"
         style="@style/textAppearanceTitleInverse"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
