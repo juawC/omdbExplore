@@ -39,7 +39,7 @@ implements MovieDetailView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        ButterKnife.setDebug(true);
+        ButterKnife.setDebug(false);
         ButterKnife.bind(this);
 
         Bundle bundle = getIntent().getExtras();

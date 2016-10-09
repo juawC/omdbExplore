@@ -127,6 +127,9 @@ public class MovieSearchPresenter extends MvpBasePresenter<MovieSearchView> {
             @Override
             public void onError(Throwable e) {
                 e.printStackTrace();
+                if (isViewAttached()) {
+                    getView().setErrorMessage(e);
+                }
             }
 
             @Override

@@ -17,5 +17,5 @@ public interface MovieSearchView extends MvpView {
 
     void setMovieList(List<MovieListItem> movieList);
     void setAutoComplete(Cursor moviesNames);
-    String getErrorMessage(Throwable e);
+    void setErrorMessage(Throwable e);
 }

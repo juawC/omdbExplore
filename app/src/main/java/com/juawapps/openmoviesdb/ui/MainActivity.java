@@ -9,14 +9,18 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
 import com.juawapps.openmoviesdb.Presenters.MovieSearchPresenter;
 import com.juawapps.openmoviesdb.Presenters.MovieSearchView;
 import com.juawapps.openmoviesdb.R;
+import com.juawapps.openmoviesdb.Utils;
 import com.juawapps.openmoviesdb.adapters.MoviesListAdapter;
 import com.juawapps.openmoviesdb.data.MovieListItem;
 
@@ -30,6 +34,9 @@ public class MainActivity extends MvpActivity<MovieSearchView, MovieSearchPresen
         implements MovieSearchView,  SearchView.OnQueryTextListener,
         SearchView.OnSuggestionListener, MoviesListAdapter.OnListInteractionListener{
 
+    @BindView(R.id.empty_view) TextView mEmptyView;
+    @BindView(R.id.progress_bar) ProgressBar mProgressBar;
+    @BindView(R.id.error_view) TextView mErrorView;
     @BindView(R.id.toolbar) Toolbar mToolbar;
     @BindView(R.id.search) SearchView mSearch;
     @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
@@ -53,6 +60,7 @@ public class MainActivity extends MvpActivity<MovieSearchView, MovieSearchPresen
         moviesListAdapter = new MoviesListAdapter(getApplicationContext(), this);
         mRecyclerView.setAdapter(moviesListAdapter);
 
+
         //Setting up SearchView
         mSearch.setIconifiedByDefault(false);
         mSearch.setOnQueryTextListener(this);
@@ -63,6 +71,9 @@ public class MainActivity extends MvpActivity<MovieSearchView, MovieSearchPresen
                 new String[]{MovieSearchPresenter.AUTO_COMPLETE_CURSOR_COLUMNS[1]},
                 new int[] {android.R.id.text1}, 0);
         mSearch.setSuggestionsAdapter(mAutoCompleteAdapter);
+
+        //Show an empty starting state
+        showEmptyState();
     }
 
     @NonNull
@@ -95,13 +106,19 @@ public class MainActivity extends MvpActivity<MovieSearchView, MovieSearchPresen
 
 
     @Override
-    public String getErrorMessage(Throwable e) {
-        return null;
+    public void setErrorMessage(Throwable e) {
+        showErrorView(e.getMessage());
     }
 
 
     @Override
     public void setMovieList(List<MovieListItem> data) {
+
+        if(data.size() == 0) {
+            showEmptyState();
+        } else {
+            showContentView();
+        }
         moviesListAdapter.setMovies(data);
         moviesListAdapter.notifyDataSetChanged();
     }
@@ -117,8 +134,7 @@ public class MainActivity extends MvpActivity<MovieSearchView, MovieSearchPresen
 
         if (query.length() > 2) {
             hideSoftKeyboard();
-
-            getPresenter().searchMoviesList(query);
+            startQueryNewList(query);
 
         } else {
             //resets the movies list
@@ -156,7 +172,7 @@ public class MainActivity extends MvpActivity<MovieSearchView, MovieSearchPresen
         String title = cursor.getString(MovieSearchPresenter.AUTO_COMPLETE_CURSOR_TITLE);
         mSearch.setQuery(title, false);
 
-        getPresenter().searchMoviesList(title);
+        startQueryNewList(title);
         return true;
     }
 
@@ -171,6 +187,54 @@ public class MainActivity extends MvpActivity<MovieSearchView, MovieSearchPresen
         startActivity(intent);
     }
 
+    public void startQueryNewList(String query) {
+        showLoadingView();
+        getPresenter().searchMoviesList(query);
+    }
+
+    public void showEmptyState() {
+
+        if (Utils.isConnected(this) ) {
+            showEmptyView();
+        } else {
+            showErrorView(getString(R.string.no_connectivity));
+        }
+    }
+
+    public void showContentView() {
+
+        mRecyclerView.setVisibility(View.VISIBLE);
+        mErrorView.setVisibility(View.INVISIBLE);
+        mEmptyView.setVisibility(View.INVISIBLE);
+        mProgressBar.setVisibility(View.INVISIBLE);
+    }
+
+    public void showLoadingView() {
+
+        mRecyclerView.setVisibility(View.INVISIBLE);
+        mErrorView.setVisibility(View.INVISIBLE);
+        mEmptyView.setVisibility(View.INVISIBLE);
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    public void showEmptyView() {
+
+        mRecyclerView.setVisibility(View.INVISIBLE);
+        mErrorView.setVisibility(View.INVISIBLE);
+        mEmptyView.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.INVISIBLE);
+    }
+
+    public void showErrorView(String errorMessage) {
+
+        mErrorView.setText(errorMessage);
+        mRecyclerView.setVisibility(View.INVISIBLE);
+        mErrorView.setVisibility(View.VISIBLE);
+        mEmptyView.setVisibility(View.INVISIBLE);
+        mProgressBar.setVisibility(View.INVISIBLE);
+
+    }
+
     private void hideSoftKeyboard() {
         mSearch.clearFocus();
 
@@ -181,7 +245,6 @@ public class MainActivity extends MvpActivity<MovieSearchView, MovieSearchPresen
             inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
     }
-
 
     //Not used
     @Override
