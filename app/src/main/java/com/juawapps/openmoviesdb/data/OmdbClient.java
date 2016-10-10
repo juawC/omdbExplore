@@ -12,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class OmdbClient {
 
-    private static final String BASE_URL = "http://www.omdbapi.com";
+    public static final String BASE_URL = "http://www.omdbapi.com";
     private static OmdbClient sOmdbClient;
     private final Retrofit mRetrofit;
 

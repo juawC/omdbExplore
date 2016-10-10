@@ -49,7 +49,7 @@ public class MainActivity extends MvpActivity<MovieSearchView, MovieSearchPresen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.setDebug(true);
+        ButterKnife.setDebug(false);
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
