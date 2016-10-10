@@ -34,6 +34,7 @@ public class MainActivity extends MvpActivity<MovieSearchView, MovieSearchPresen
         implements MovieSearchView,  SearchView.OnQueryTextListener,
         SearchView.OnSuggestionListener, MoviesListAdapter.OnListInteractionListener{
 
+    private static final String ADAPTER_STATE_KEY = "adapter_state";
     @BindView(R.id.empty_view) TextView mEmptyView;
     @BindView(R.id.progress_bar) ProgressBar mProgressBar;
     @BindView(R.id.error_view) TextView mErrorView;
@@ -60,6 +61,12 @@ public class MainActivity extends MvpActivity<MovieSearchView, MovieSearchPresen
         moviesListAdapter = new MoviesListAdapter(getApplicationContext(), this);
         mRecyclerView.setAdapter(moviesListAdapter);
 
+        //Restore movies adapter
+        if(savedInstanceState != null) {
+            ArrayList<MovieListItem> movies = savedInstanceState.getParcelableArrayList(
+                    ADAPTER_STATE_KEY);
+            moviesListAdapter.setMovies(movies);
+        }
 
         //Setting up SearchView
         mSearch.setIconifiedByDefault(false);
@@ -73,7 +80,15 @@ public class MainActivity extends MvpActivity<MovieSearchView, MovieSearchPresen
         mSearch.setSuggestionsAdapter(mAutoCompleteAdapter);
 
         //Show an empty starting state
-        showEmptyState();
+        if (moviesListAdapter.getItemCount() == 0) showEmptyState();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle state) {
+        //Save movies adapter
+        super.onSaveInstanceState(state);
+        state.putParcelableArrayList(ADAPTER_STATE_KEY,
+                (ArrayList<MovieListItem>)moviesListAdapter.getItems());
     }
 
     @NonNull
@@ -81,6 +96,7 @@ public class MainActivity extends MvpActivity<MovieSearchView, MovieSearchPresen
     public MovieSearchPresenter createPresenter() {
         return new MovieSearchPresenter();
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -1,5 +1,8 @@
 package com.juawapps.openmoviesdb.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -8,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by joaocevada on 08/10/16.
  */
 
-public class MovieListItem {
+public class MovieListItem implements Parcelable {
     @SerializedName("imdbID")
     private String imdbID;
     @SerializedName("Poster")
@@ -66,5 +69,41 @@ public class MovieListItem {
 
     public void setYear(String year) {
         this.year = year;
+    }
+
+
+    protected MovieListItem(Parcel in) {
+        imdbID = in.readString();
+        poster = in.readString();
+        title = in.readString();
+        type = in.readString();
+        year = in.readString();
+    }
+
+    public static final Creator<MovieListItem> CREATOR = new Creator<MovieListItem>() {
+        @Override
+        public MovieListItem createFromParcel(Parcel in) {
+            return new MovieListItem(in);
+        }
+
+        @Override
+        public MovieListItem[] newArray(int size) {
+            return new MovieListItem[size];
+        }
+    };
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(imdbID);
+        dest.writeString(poster);
+        dest.writeString(title);
+        dest.writeString(type);
+        dest.writeString(year);
     }
 }

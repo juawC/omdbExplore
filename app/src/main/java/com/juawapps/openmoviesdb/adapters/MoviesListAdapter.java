@@ -82,6 +82,10 @@ public class MoviesListAdapter extends RecyclerView.Adapter<MoviesListAdapter.Mo
 
     }
 
+    public List<MovieListItem> getItems() {
+        return mMoviesList;
+    }
+
     @Override
     public int getItemCount() {
         return mMoviesList.size();
