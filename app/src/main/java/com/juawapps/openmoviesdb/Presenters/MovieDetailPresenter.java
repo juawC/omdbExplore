@@ -3,9 +3,12 @@ package com.juawapps.openmoviesdb.Presenters;
 import android.util.Log;
 
 import com.hannesdorfmann.mosby.mvp.MvpBasePresenter;
+import com.juawapps.openmoviesdb.Utils;
 import com.juawapps.openmoviesdb.data.MovieItemResponse;
+import com.juawapps.openmoviesdb.data.MovieListResponse;
 import com.juawapps.openmoviesdb.data.OmdbHelper;
 
+import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -30,6 +33,11 @@ public class MovieDetailPresenter extends MvpBasePresenter<MovieDetailView> {
     }
 
     public void getMovieDetails(String id) {
+        getMovieDetails(id, Utils.getSchedulers());
+    }
+
+    public void getMovieDetails(String id, Observable.Transformer<MovieItemResponse,
+            MovieItemResponse> schedulers) {
 
 
         if (mDetailSubscription != null && !mDetailSubscription.isUnsubscribed()) {
@@ -37,7 +45,7 @@ public class MovieDetailPresenter extends MvpBasePresenter<MovieDetailView> {
         }
 
         mDetailSubscription = mOmdbHelper.getMovieDetailsById(id)
-                .observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+                .compose(schedulers)
                 .subscribe(movieDetailSubscriber());
 
     }

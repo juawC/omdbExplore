@@ -4,6 +4,10 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
 /**
  * Utils class.
  * <p>
@@ -27,5 +31,15 @@ public class Utils {
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
+    }
+
+    /**
+     *  Function to get the default schedulers
+     *  <p>
+     *  @return default schedulers
+     */
+    static public  <T> Observable.Transformer<T, T> getSchedulers() {
+        return observable -> observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 }

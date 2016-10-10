@@ -5,6 +5,7 @@ import android.database.MatrixCursor;
 import android.util.Log;
 
 import com.hannesdorfmann.mosby.mvp.MvpBasePresenter;
+import com.juawapps.openmoviesdb.Utils;
 import com.juawapps.openmoviesdb.data.MovieListItem;
 import com.juawapps.openmoviesdb.data.MovieListResponse;
 import com.juawapps.openmoviesdb.data.OmdbHelper;
@@ -15,10 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  *  Presenter to get a movie list for the {@link com.juawapps.openmoviesdb.ui.MainActivity}.
@@ -46,6 +46,11 @@ public class MovieSearchPresenter extends MvpBasePresenter<MovieSearchView> {
     }
 
     public void updateAutoComplete(String title) {
+        updateAutoComplete(title, Utils.getSchedulers());
+    }
+
+    public void updateAutoComplete(String title,
+                                   Observable.Transformer<MatrixCursor, MatrixCursor> schedulers) {
 
         try {
             if (mAutoCompleteSubscription != null && !mAutoCompleteSubscription.isUnsubscribed()) {
@@ -57,7 +62,6 @@ public class MovieSearchPresenter extends MvpBasePresenter<MovieSearchView> {
 
             mAutoCompleteSubscription = mOmdbHelper.getMoviesByTitle(encodedTitle)
                     .debounce(AUTO_COMPLETE_WAIT_MILISECONDS, TimeUnit.MILLISECONDS)
-                    .observeOn(AndroidSchedulers.mainThread())
                     .map(movieResponse -> {
                         MatrixCursor cursor = getAutoCompleteCursor();
 
@@ -67,7 +71,7 @@ public class MovieSearchPresenter extends MvpBasePresenter<MovieSearchView> {
                         }
                         return cursor;
                     })
-                    .subscribeOn(Schedulers.io())
+                    .compose(schedulers)
                     .subscribe(autoCompleteSubscriber());
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -76,6 +80,10 @@ public class MovieSearchPresenter extends MvpBasePresenter<MovieSearchView> {
     }
 
     public void searchMoviesList(String title) {
+        searchMoviesList(title, Utils.getSchedulers());
+    }
+    public void searchMoviesList(String title, Observable.Transformer<MovieListResponse,
+            MovieListResponse> schedulers) {
 
         try {
             if (mSearchSubscription != null && !mSearchSubscription.isUnsubscribed()) {
@@ -85,7 +93,7 @@ public class MovieSearchPresenter extends MvpBasePresenter<MovieSearchView> {
             title+="*"; //Wildcard to allow queries with partial names
             String encodedTitle= URLEncoder.encode(title, "UTF-8");
             mSearchSubscription = mOmdbHelper.getMoviesByTitle(encodedTitle)
-                    .observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
+                    .compose(schedulers)
                     .subscribe(movieListSubscriber());
 
         } catch (UnsupportedEncodingException e) {
