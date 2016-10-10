@@ -11,11 +11,11 @@ import android.view.View;
  * Created by joaocevada on 08/10/16.
  */
 
-public class VerticalItemDecoration extends RecyclerView.ItemDecoration {
+public class ItemDecoration extends RecyclerView.ItemDecoration {
 
     private final int mVerticalSpaceHeight;
 
-    public VerticalItemDecoration(Context context, int idHeightDimen) {
+    public ItemDecoration(Context context, int idHeightDimen) {
 
 
         this.mVerticalSpaceHeight = (int) context.getResources().getDimension(idHeightDimen);
@@ -25,5 +25,6 @@ public class VerticalItemDecoration extends RecyclerView.ItemDecoration {
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
                                RecyclerView.State state) {
         outRect.bottom = mVerticalSpaceHeight;
+        outRect.left = mVerticalSpaceHeight;
     }
 }

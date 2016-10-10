@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -49,14 +49,15 @@ public class MainActivity extends MvpActivity<MovieSearchView, MovieSearchPresen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.setDebug(false);
+        ButterKnife.setDebug(true);
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
 
         //Setting up RecyclerView
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.addItemDecoration(new VerticalItemDecoration(this,
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this,
+                getResources().getInteger(R.integer.list_column_count)));
+        mRecyclerView.addItemDecoration(new ItemDecoration(this,
                 R.dimen.list_separator_height));
         moviesListAdapter = new MoviesListAdapter(getApplicationContext(), this);
         mRecyclerView.setAdapter(moviesListAdapter);
@@ -95,29 +96,6 @@ public class MainActivity extends MvpActivity<MovieSearchView, MovieSearchPresen
     @Override
     public MovieSearchPresenter createPresenter() {
         return new MovieSearchPresenter();
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
 
